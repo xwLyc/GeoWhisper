@@ -55,14 +55,16 @@ class _MessageListPageState extends State<MessageListPage> {
 
   Future<void> _loadInitialData() async {
     try {
-      // ✅ 使用 await 获取 Position 对象
       final position = await _locationService.getCurrentPosition();
+
       if (position != null) {
-        final data =
-            await widget.messageService.getMessagesByChannel(currentChannel);
         final channels = _locationService.getNearbyChannels(position);
+        final selectedChannel = channels.isNotEmpty ? channels.first : '暂无附近频道';
+        final data =
+            await widget.messageService.getMessagesByChannel(selectedChannel);
+
         setState(() {
-          currentChannel = channels.isNotEmpty ? channels.first : '暂无附近频道';
+          currentChannel = selectedChannel;
           messages = data;
         });
       } else {

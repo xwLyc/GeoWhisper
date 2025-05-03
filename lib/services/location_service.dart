@@ -1,5 +1,5 @@
+// lib/services/location_service.dart
 import 'package:geolocator/geolocator.dart';
-// import 'package:permission_handler/permission_handler.dart'; // 可删掉
 
 class LocationService {
   // 获取定位权限并处理用户的响应
