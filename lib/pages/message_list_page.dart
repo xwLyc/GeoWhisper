@@ -2,11 +2,17 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart'; // ✅ 正确导入 geolocator
 import '../services/location_service.dart';
-import '../services/mock_messages.dart'; // 模拟消息数据
+import '../services/message_service.dart';
 import '../widgets/message_list_view.dart';
+import '../widgets/chat_input_bar.dart';
+import '../models/message.dart';
 
 class MessageListPage extends StatefulWidget {
-  const MessageListPage({Key? key}) : super(key: key);
+  final MessageService messageService; // ✅ 注入依赖
+  const MessageListPage({
+    Key? key,
+    required this.messageService, // 可注入 MockMessageService 或 ApiMessageService
+  }) : super(key: key);
 
   @override
   State<MessageListPage> createState() => _MessageListPageState();
@@ -16,11 +22,35 @@ class _MessageListPageState extends State<MessageListPage> {
   String currentChannel = '定位中...';
   late Future<void> _initFuture;
   final LocationService _locationService = LocationService();
+  List<Message> messages = [];
 
   @override
   void initState() {
     super.initState();
     _initFuture = _loadInitialData();
+    messages = []; // ✅ 初始化为空列表
+  }
+
+  // 新增方法：添加新消息
+  void _addMessage(String content) async {
+    final newMessage = Message(
+      id: DateTime.now().millisecondsSinceEpoch.toString(), // ✅ 确保唯一 ID
+      authorId: 'xxx',
+      content: content,
+      likes: 0,
+      replies: 0,
+      channelId: currentChannel,
+      timestamp: DateTime.now(),
+    );
+    await widget.messageService.sendMessage(newMessage); // ✅ 提交到服务层
+    setState(() {
+      messages.insert(0, newMessage); // ✅ 将新消息插入到列表顶部
+    });
+    // 自动滚动到顶部
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 假设你有一个 ScrollController 控制 MessageListView
+      // 示例：scrollController.animateTo(0, ...);
+    });
   }
 
   Future<void> _loadInitialData() async {
@@ -28,9 +58,12 @@ class _MessageListPageState extends State<MessageListPage> {
       // ✅ 使用 await 获取 Position 对象
       final position = await _locationService.getCurrentPosition();
       if (position != null) {
+        final data =
+            await widget.messageService.getMessagesByChannel(currentChannel);
         final channels = _locationService.getNearbyChannels(position);
         setState(() {
           currentChannel = channels.isNotEmpty ? channels.first : '暂无附近频道';
+          messages = data;
         });
       } else {
         // ✅ 如果定位失败，使用默认位置（北京王府井）
@@ -95,7 +128,20 @@ class _MessageListPageState extends State<MessageListPage> {
         future: _initFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return MessageListView(channel: currentChannel);
+            return Column(
+              children: [
+                Expanded(
+                  child: MessageListView(
+                      channel: currentChannel,
+                      messages: messages), // ✅ 传递 message
+                ),
+                SafeArea(
+                  top: false, // 只处理底部
+                  bottom: true,
+                  child: ChatInputBar(onSendMessage: _addMessage),
+                ),
+              ],
+            );
           }
           return const Center(child: CircularProgressIndicator());
         },

@@ -1,15 +1,23 @@
+// message_list_view.dart
 import 'package:flutter/material.dart';
-import '../services/mock_messages.dart';
+import 'package:geo_whisper/models/channel.dart';
+import '../pages/channel_detail_page.dart'; // ✅ 导入详情页
 import 'message_card.dart';
+import '../models/message.dart';
 
 class MessageListView extends StatelessWidget {
   final String channel;
+  final List<Message> messages; // ✅ 接收外部消息列表
 
-  const MessageListView({Key? key, required this.channel}) : super(key: key);
+  const MessageListView({
+    Key? key,
+    required this.channel,
+    required this.messages, // ✅ 必填参数
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final messages = MockMessages.getMessagesByChannel(channel);
+    // final messages = MockMessages.getMessagesByChannel(channel);
 
     // ✅ 空状态提示
     if (messages.isEmpty) {
@@ -29,11 +37,28 @@ class MessageListView extends StatelessWidget {
     return ListView.builder(
       itemCount: messages.length,
       itemBuilder: (context, index) {
-        final msg = messages[messages.length - 1 - index]; // 反向遍历
-        return MessageCard(
-          content: msg['content']!,
-          likes: msg['likes']!,
-          replies: msg['replies']!,
+        // final msg = messages[messages.length - 1 - index]; // 反向遍历
+        final msg = messages[index]; // ✅ 使用传入的 messages
+        final channel = Channel(
+          id: msg.channelId,
+          name: msg.content, // 或根据需求自定义名称
+          onlineCount: msg.onlineCount ?? 0,
+          currentUserId: '112', // 从全局状态或 AuthService 获取
+          authorId: msg.authorId,
+        );
+        return KeyedSubtree(
+          // ✅ 强制使用唯一 Key
+          key: ValueKey(msg.id), // ✅ 使用 message.id 作为 Key
+          child: MessageCard(
+            message: msg,
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                '/channel_detail',
+                arguments: channel, // ✅ 传递 Channel 对象
+              );
+            },
+          ),
         );
       },
     );

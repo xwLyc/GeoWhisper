@@ -16,7 +16,7 @@ class ChannelItem extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.location_on),
       title: Text(channel.name),
-      subtitle: Text('距离：${channel.distance}m'),
+      // subtitle: Text('距离：${channel.distance}m'),
       trailing: const Icon(Icons.arrow_forward_ios),
       onTap: onTap,
     );

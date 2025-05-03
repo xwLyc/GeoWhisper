@@ -1,7 +1,8 @@
 // lib/routes.dart
 import 'package:flutter/material.dart';
 import 'pages/channel_selection_page.dart';
-import 'pages/message_detail_page.dart';
+import 'pages/channel_detail_page.dart';
+import '../models/channel.dart';
 
 Map<String, WidgetBuilder> appRoutes = {
   '/channel_selection': (context) => const ChannelSelectionPage(),
@@ -9,10 +10,11 @@ Map<String, WidgetBuilder> appRoutes = {
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
-    case '/message_detail':
-      final String message = settings.arguments as String;
+    case '/channel_detail':
+      // ✅ 从 arguments 中提取 Channel 对象
+      final Channel channel = settings.arguments as Channel;
       return MaterialPageRoute(
-        builder: (context) => MessageDetailPage(messageContent: message),
+        builder: (context) => ChannelDetailPage(channel: channel),
       );
     default:
       return _errorRoute();

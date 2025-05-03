@@ -1,40 +1,47 @@
 // lib/widgets/message_card.dart
 import 'package:flutter/material.dart';
+import '../models/message.dart';
 
 class MessageCard extends StatelessWidget {
-  final String content;
-  final int likes;
-  final int replies;
-
+  final Message message;
+  final VoidCallback onTap; // ✅ 新增点击回调
   const MessageCard({
     Key? key,
-    required this.content,
-    this.likes = 0,
-    this.replies = 0,
+    required this.message, // ✅ 接收 Message 对象
+    required this.onTap, // ✅ 必须传入点击事件
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(content),
-            Row(
+    return GestureDetector(
+        onTap: onTap, // ✅ 触发回调
+        child: Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconButton(
-                    icon: const Icon(Icons.favorite_border), onPressed: () {}),
-                Text('$likes'),
-                IconButton(icon: const Icon(Icons.reply), onPressed: () {}),
-                Text('+1 ($replies人)'),
+                Text(message.content),
+                Row(
+                  children: [
+                    IconButton(
+                        icon: const Icon(Icons.favorite_border),
+                        onPressed: () {}),
+                    Text('${message.likes}'),
+                    SizedBox(width: 8),
+                    IconButton(
+                        icon: const Icon(Icons.chat_bubble_outline),
+                        onPressed: () {}),
+                    Text('${message.replies}'),
+                    Spacer(),
+                    Icon(Icons.person_outline, size: 16), // ✅ 在线人数图标
+                    Text('${message.onlineCount}人在线'), // ✅ 显示在线人数
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }
