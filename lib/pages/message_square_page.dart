@@ -6,19 +6,20 @@ import '../services/message_service.dart';
 import '../widgets/message_list_view.dart';
 import '../widgets/chat_input_bar.dart';
 import '../models/message.dart';
+import '../widgets/chat_input_bar_dash_style.dart'; // 替换旧的 chat_input_bar
 
-class MessageListPage extends StatefulWidget {
+class MessageSquarePage extends StatefulWidget {
   final MessageService messageService; // ✅ 注入依赖
-  const MessageListPage({
+  const MessageSquarePage({
     Key? key,
     required this.messageService, // 可注入 MockMessageService 或 ApiMessageService
   }) : super(key: key);
 
   @override
-  State<MessageListPage> createState() => _MessageListPageState();
+  State<MessageSquarePage> createState() => _MessageSquarePageState();
 }
 
-class _MessageListPageState extends State<MessageListPage> {
+class _MessageSquarePageState extends State<MessageSquarePage> {
   String currentChannel = '定位中...';
   late Future<void> _initFuture;
   final LocationService _locationService = LocationService();
@@ -140,7 +141,7 @@ class _MessageListPageState extends State<MessageListPage> {
                 SafeArea(
                   top: false, // 只处理底部
                   bottom: true,
-                  child: ChatInputBar(onSendMessage: _addMessage),
+                  child: DashStyleInputBar(onSend: _addMessage),
                 ),
               ],
             );

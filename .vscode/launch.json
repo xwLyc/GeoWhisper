@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter 热重载调试",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart", // 入口文件，可自定义
+      "flutterMode": "debug"
+    }
+  ]
+}
