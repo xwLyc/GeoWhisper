@@ -1,7 +1,7 @@
-// models/channel.dart
+// lib/models/message_chat.dart
 import 'dart:convert';
 
-class Channel {
+class MessageChat {
   final String id;
   final String name; // 聊天室名称
   final int members;
@@ -9,7 +9,7 @@ class Channel {
   final String authorId; // 楼主 ID（用于判断是否为楼主）
   bool isJoined; // ✅ 改为可变字段
 
-  Channel({
+  MessageChat({
     required this.id,
     required this.name,
     required this.authorId,
@@ -18,8 +18,9 @@ class Channel {
     this.isJoined = false,
   });
 
-  factory Channel.fromJson(Map<String, dynamic> json, String currentUserId) {
-    return Channel(
+  factory MessageChat.fromJson(
+      Map<String, dynamic> json, String currentUserId) {
+    return MessageChat(
       id: json['id'],
       name: json['name'],
       members: json['members'] ?? 0,
@@ -29,7 +30,7 @@ class Channel {
     );
   }
 
-  Channel copyWith({
+  MessageChat copyWith({
     String? id,
     String? name,
     int? members,
@@ -37,7 +38,7 @@ class Channel {
     String? authorId,
     bool? isJoined,
   }) {
-    return Channel(
+    return MessageChat(
       id: id ?? this.id,
       name: name ?? this.name,
       members: members ?? this.members,

@@ -1,15 +1,15 @@
 // widgets/chat_message_card.dart
 import 'package:flutter/material.dart';
-import '../models/chat_message.dart';
+import '../models/chat_detail.dart';
 
 class ChatMessageCard extends StatelessWidget {
-  final LocalChatMessage message;
+  final ChatDetail chatDetail;
   final bool isAuthor; // 是否为楼主
   final bool isSelf; // 是否为自己
 
   const ChatMessageCard({
     Key? key,
-    required this.message,
+    required this.chatDetail,
     required this.isAuthor,
     required this.isSelf,
   }) : super(key: key);
@@ -31,9 +31,9 @@ class ChatMessageCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  CircleAvatar(child: Text(message.username[0])),
+                  CircleAvatar(child: Text(chatDetail.username[0])),
                   SizedBox(width: 8),
-                  Text(message.username),
+                  Text(chatDetail.username),
                   if (isAuthor)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -46,10 +46,10 @@ class ChatMessageCard extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 8),
-              Text(message.text),
+              Text(chatDetail.text),
               SizedBox(height: 4),
               Text(
-                '${message.timestamp.hour}:${message.timestamp.minute}',
+                '${chatDetail.timestamp.hour}:${chatDetail.timestamp.minute}',
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],

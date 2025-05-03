@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../models/channel.dart';
+import '../models/message_chat.dart';
 
 class ChannelItem extends StatelessWidget {
-  final Channel channel;
+  final MessageChat channel;
   final VoidCallback onTap;
 
   const ChannelItem({

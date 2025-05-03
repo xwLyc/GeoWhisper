@@ -5,7 +5,7 @@ import '../services/location_service.dart';
 import '../services/message_service.dart';
 import '../widgets/message_list_view.dart';
 import '../widgets/chat_input_bar.dart';
-import '../models/message.dart';
+import '../models/channel_message.dart';
 import '../widgets/chat_input_bar_dash_style.dart'; // 替换旧的 chat_input_bar
 
 class MessageSquarePage extends StatefulWidget {
@@ -23,18 +23,18 @@ class _MessageSquarePageState extends State<MessageSquarePage> {
   String currentChannel = '定位中...';
   late Future<void> _initFuture;
   final LocationService _locationService = LocationService();
-  List<Message> messages = [];
+  List<ChannelMessage> channelMessages = [];
 
   @override
   void initState() {
     super.initState();
     _initFuture = _loadInitialData();
-    messages = []; // ✅ 初始化为空列表
+    channelMessages = []; // ✅ 初始化为空列表
   }
 
   // 新增方法：添加新消息
   void _addMessage(String content) async {
-    final newMessage = Message(
+    final newMessage = ChannelMessage(
       id: DateTime.now().millisecondsSinceEpoch.toString(), // ✅ 确保唯一 ID
       authorId: 'xxx',
       content: content,
@@ -45,7 +45,7 @@ class _MessageSquarePageState extends State<MessageSquarePage> {
     );
     await widget.messageService.sendMessage(newMessage); // ✅ 提交到服务层
     setState(() {
-      messages.insert(0, newMessage); // ✅ 将新消息插入到列表顶部
+      channelMessages.insert(0, newMessage); // ✅ 将新消息插入到列表顶部
     });
     // 自动滚动到顶部
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -66,7 +66,7 @@ class _MessageSquarePageState extends State<MessageSquarePage> {
 
         setState(() {
           currentChannel = selectedChannel;
-          messages = data;
+          channelMessages = data;
         });
       } else {
         // ✅ 如果定位失败，使用默认位置（北京王府井）
@@ -136,7 +136,7 @@ class _MessageSquarePageState extends State<MessageSquarePage> {
                 Expanded(
                   child: MessageListView(
                       channel: currentChannel,
-                      messages: messages), // ✅ 传递 message
+                      messages: channelMessages), // ✅ 传递 message
                 ),
                 SafeArea(
                   top: false, // 只处理底部

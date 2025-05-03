@@ -1,13 +1,13 @@
 // lib/widgets/message_card.dart
 import 'package:flutter/material.dart';
-import '../models/message.dart';
+import '../models/channel_message.dart';
 
 class MessageCard extends StatelessWidget {
-  final Message message;
+  final ChannelMessage message;
   final VoidCallback onTap; // ✅ 新增点击回调
   const MessageCard({
     Key? key,
-    required this.message, // ✅ 接收 Message 对象
+    required this.message, // ✅ 接收 ChannelMessage 对象
     required this.onTap, // ✅ 必须传入点击事件
   }) : super(key: key);
 

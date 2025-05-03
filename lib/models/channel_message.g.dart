@@ -1,12 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'message.dart';
+part of 'channel_message.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Message _$MessageFromJson(Map<String, dynamic> json) => Message(
+ChannelMessage _$ChannelMessageFromJson(Map<String, dynamic> json) =>
+    ChannelMessage(
       id: json['id'] as String,
       content: json['content'] as String,
       likes: (json['likes'] as num?)?.toInt() ?? 0,
@@ -17,7 +18,8 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
       members: (json['members'] as num?)?.toInt() ?? 0,
     );
 
-Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
+Map<String, dynamic> _$ChannelMessageToJson(ChannelMessage instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'content': instance.content,
       'likes': instance.likes,

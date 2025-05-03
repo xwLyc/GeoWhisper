@@ -1,33 +1,34 @@
-// lib/pages/channel_detail_page.dart
+// lib/pages/message_chat_page.dart
 import 'package:flutter/material.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
-import '../models/channel.dart';
-import '../models/chat_message.dart';
+import '../models/message_chat.dart';
+import '../models/chat_detail.dart';
 import '../services/websocket_service.dart';
 import '../services/joined_channel_manager.dart'; // 假设你有这个类
 
-class ChannelDetailPage extends StatefulWidget {
-  final Channel channel;
+class MessageChatPage extends StatefulWidget {
+  final MessageChat messageChat;
 
-  const ChannelDetailPage({Key? key, required this.channel}) : super(key: key);
+  const MessageChatPage({Key? key, required this.messageChat})
+      : super(key: key);
 
   @override
-  State<ChannelDetailPage> createState() => _ChannelDetailPageState();
+  State<MessageChatPage> createState() => _MessageChatPageState();
 }
 
-class _ChannelDetailPageState extends State<ChannelDetailPage> {
+class _MessageChatPageState extends State<MessageChatPage> {
   late final MockWebSocketService _webSocketService;
   final List<ChatMessage> _messages = [];
   late final ChatUser _currentUser;
 
-  bool get _hasJoined => widget.channel.isJoined;
+  bool get _hasJoined => widget.messageChat.isJoined;
 
   @override
   void initState() {
     super.initState();
 
     _currentUser = ChatUser(
-      id: widget.channel.currentUserId,
+      id: widget.messageChat.currentUserId,
       firstName: "我",
     );
 
@@ -37,12 +38,12 @@ class _ChannelDetailPageState extends State<ChannelDetailPage> {
   }
 
   void _initWebSocket() {
-    _webSocketService = MockWebSocketService(widget.channel.id);
-    _webSocketService.connect(widget.channel.id);
+    _webSocketService = MockWebSocketService(widget.messageChat.id);
+    _webSocketService.connect(widget.messageChat.id);
     _webSocketService.messageStream.listen(_handleIncomingMessage);
   }
 
-  void _handleIncomingMessage(LocalChatMessage newMessage) {
+  void _handleIncomingMessage(ChatDetail newMessage) {
     final chatMessage = ChatMessage(
       text: newMessage.text,
       user: ChatUser(
@@ -58,7 +59,7 @@ class _ChannelDetailPageState extends State<ChannelDetailPage> {
   }
 
   void _handleSend(ChatMessage message) {
-    final localMsg = LocalChatMessage(
+    final localMsg = ChatDetail(
       id: 'msg_${DateTime.now().millisecondsSinceEpoch}',
       text: message.text,
       userId: _currentUser.id,
@@ -75,13 +76,13 @@ class _ChannelDetailPageState extends State<ChannelDetailPage> {
 
   void _joinChannel() {
     setState(() {
-      widget.channel.isJoined = true;
+      widget.messageChat.isJoined = true;
     });
 
     _initWebSocket();
 
     // 加入频道记录（假设你有这个类）
-    JoinedChannelManager().addChannel(widget.channel);
+    JoinedChannelManager().addChannel(widget.messageChat);
   }
 
   @override
@@ -96,7 +97,7 @@ class _ChannelDetailPageState extends State<ChannelDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.channel.name),
+        title: Text(widget.messageChat.name),
       ),
       body: Column(
         children: [

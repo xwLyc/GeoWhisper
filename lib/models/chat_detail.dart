@@ -1,14 +1,14 @@
-// models/chat_message.dart
+// lib/models/chat_detail.dart
 import 'package:dash_chat_2/dash_chat_2.dart';
 
-class LocalChatMessage {
+class ChatDetail {
   final String id;
   final String text;
   final String userId;
   final String username;
   final DateTime timestamp;
 
-  LocalChatMessage({
+  ChatDetail({
     required this.id,
     required this.text,
     required this.userId,

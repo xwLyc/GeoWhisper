@@ -1,13 +1,13 @@
 // message_list_view.dart
 import 'package:flutter/material.dart';
-import 'package:geo_whisper/models/channel.dart';
-import '../pages/channel_detail_page.dart'; // ✅ 导入详情页
+import 'package:geo_whisper/models/message_chat.dart';
+import '../pages/message_chat_page.dart'; // ✅ 导入详情页
 import 'message_card.dart';
-import '../models/message.dart';
+import '../models/channel_message.dart';
 
 class MessageListView extends StatelessWidget {
   final String channel;
-  final List<Message> messages; // ✅ 接收外部消息列表
+  final List<ChannelMessage> messages; // ✅ 接收外部消息列表
 
   const MessageListView({
     Key? key,
@@ -39,7 +39,7 @@ class MessageListView extends StatelessWidget {
       itemBuilder: (context, index) {
         // final msg = messages[messages.length - 1 - index]; // 反向遍历
         final msg = messages[index]; // ✅ 使用传入的 messages
-        final channel = Channel(
+        final channel = MessageChat(
           id: msg.channelId,
           name: msg.content, // 或根据需求自定义名称
           members: msg.members ?? 0,
@@ -54,7 +54,7 @@ class MessageListView extends StatelessWidget {
             onTap: () {
               Navigator.pushNamed(
                 context,
-                '/channel_detail',
+                '/message_chat',
                 arguments: channel, // ✅ 传递 Channel 对象
               );
             },

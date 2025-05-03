@@ -1,8 +1,8 @@
 import 'dart:async';
-import '../models/chat_message.dart';
+import '../models/chat_detail.dart';
 
 class MockWebSocketService {
-  final StreamController<LocalChatMessage> _messageStreamController =
+  final StreamController<ChatDetail> _messageStreamController =
       StreamController.broadcast();
   late final String channelId;
 
@@ -15,25 +15,25 @@ class MockWebSocketService {
   }
 
   // 模拟发送消息
-  void sendMessage(LocalChatMessage message) {
+  void sendMessage(ChatDetail chatDetail) {
     // 模拟服务端回复（延迟 1s）
     Future.delayed(const Duration(seconds: 1), () {
-      _sendMockMessage('机器人', '你发送了：${message.text}');
+      _sendMockMessage('机器人', '你发送了：${chatDetail.text}');
     });
   }
 
   void _sendMockMessage(String userId, String text) {
-    final message = LocalChatMessage(
+    final chatDetail = ChatDetail(
       id: 'mock_${DateTime.now().millisecondsSinceEpoch}',
       text: text,
       userId: userId,
       username: userId,
       timestamp: DateTime.now(),
     );
-    _messageStreamController.add(message);
+    _messageStreamController.add(chatDetail);
   }
 
-  Stream<LocalChatMessage> get messageStream => _messageStreamController.stream;
+  Stream<ChatDetail> get messageStream => _messageStreamController.stream;
 
   void dispose() {
     _messageStreamController.close();

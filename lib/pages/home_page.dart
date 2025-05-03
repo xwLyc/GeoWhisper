@@ -1,6 +1,6 @@
 // lib/pages/home_page.dart
 import 'package:flutter/material.dart';
-import 'message_square_page.dart';
+import 'channel_message_page.dart';
 import 'joined_groups_page.dart';
 import 'settings_page.dart';
 import 'friend_list_page.dart';

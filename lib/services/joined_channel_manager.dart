@@ -1,5 +1,5 @@
 // lib/services/joined_channel_manager.dart
-import '../models/channel.dart';
+import '../models/message_chat.dart';
 
 class JoinedChannelManager {
   // 私有构造函数
@@ -12,25 +12,25 @@ class JoinedChannelManager {
   // 提供访问点
   factory JoinedChannelManager() => _instance;
 
-  final List<Channel> _joinedChannels = [];
+  final List<MessageChat> _joinedChats = [];
 
-  List<Channel> get joinedChannels => List.unmodifiable(_joinedChannels);
+  List<MessageChat> get joinedChats => List.unmodifiable(_joinedChats);
 
-  void addChannel(Channel channel) {
-    if (!_joinedChannels.any((c) => c.id == channel.id)) {
-      _joinedChannels.add(channel);
+  void addChannel(MessageChat channel) {
+    if (!_joinedChats.any((c) => c.id == channel.id)) {
+      _joinedChats.add(channel);
     }
   }
 
   void removeChannel(String channelId) {
-    _joinedChannels.removeWhere((c) => c.id == channelId);
+    _joinedChats.removeWhere((c) => c.id == channelId);
   }
 
   bool isJoined(String channelId) {
-    return _joinedChannels.any((c) => c.id == channelId);
+    return _joinedChats.any((c) => c.id == channelId);
   }
 
   void clear() {
-    _joinedChannels.clear();
+    _joinedChats.clear();
   }
 }
