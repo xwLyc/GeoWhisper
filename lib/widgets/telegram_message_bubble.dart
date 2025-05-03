@@ -1,10 +1,9 @@
-// lib/widgets/telegram_message_bubble.dart
-
-import 'package:flutter_chat_types/flutter_chat_types.dart' as ChatTypes;
+// widgets/telegram_message_bubble.dart
+import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
 
 class TelegramMessageBubble extends StatelessWidget {
-  final ChatTypes.Message message;
+  final ChatMessage message;
   final bool isCurrentUser;
 
   const TelegramMessageBubble({
@@ -15,8 +14,6 @@ class TelegramMessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textMessage = message as ChatTypes.TextMessage;
-
     return Container(
       margin: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
       alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -27,7 +24,7 @@ class TelegramMessageBubble extends StatelessWidget {
           if (!isCurrentUser)
             CircleAvatar(
               backgroundImage: NetworkImage(
-                message.author.imageUrl ??
+                message.user.profileImage ??
                     'https://picsum.photos/200/300?random=0',
               ),
               radius: 16,
@@ -45,7 +42,7 @@ class TelegramMessageBubble extends StatelessWidget {
                 children: [
                   if (!isCurrentUser)
                     Text(
-                      message.author.firstName ?? '匿名用户',
+                      message.user.firstName ?? '匿名用户',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -53,7 +50,7 @@ class TelegramMessageBubble extends StatelessWidget {
                       ),
                     ),
                   Text(
-                    textMessage.text,
+                    message.text,
                     style: TextStyle(fontSize: 16),
                   ),
                   Align(
@@ -72,11 +69,7 @@ class TelegramMessageBubble extends StatelessWidget {
     );
   }
 
-  String _formatTime(int? timestamp) {
-    if (timestamp == null) {
-      return '刚刚';
-    }
-    final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+  String _formatTime(DateTime time) {
+    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
   }
 }

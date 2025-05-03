@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import '../models/channel.dart';
-import '../models/chat_message.dart' as LocalChatMessage;
+import '../models/chat_message.dart';
 import '../services/websocket_service.dart';
 
 class ChannelDetailPage extends StatefulWidget {
@@ -35,7 +35,7 @@ class _ChannelDetailPageState extends State<ChannelDetailPage> {
     _webSocketService.messageStream.listen(_handleIncomingMessage);
   }
 
-  void _handleIncomingMessage(LocalChatMessage.ChatMessage newMessage) {
+  void _handleIncomingMessage(LocalChatMessage newMessage) {
     final chatMessage = ChatMessage(
       text: newMessage.text,
       user: ChatUser(
@@ -51,7 +51,7 @@ class _ChannelDetailPageState extends State<ChannelDetailPage> {
   }
 
   void _handleSend(ChatMessage message) {
-    final localMsg = LocalChatMessage.ChatMessage(
+    final localMsg = LocalChatMessage(
       id: 'msg_${DateTime.now().millisecondsSinceEpoch}',
       text: message.text,
       userId: _currentUser.id,

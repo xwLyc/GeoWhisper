@@ -1,10 +1,10 @@
 // models/user.dart
-import 'package:flutter_chat_types/flutter_chat_types.dart' as ChatTypes;
+import 'package:dash_chat_2/dash_chat_2.dart';
 
-ChatTypes.User buildUser(String userId, String username) {
-  return ChatTypes.User(
+ChatUser buildUser(String userId, String username) {
+  return ChatUser(
     id: userId,
     firstName: username,
-    imageUrl: 'https://picsum.photos/200/300?random=$userId',
+    profileImage: 'https://picsum.photos/200/300?random=$userId',
   );
 }

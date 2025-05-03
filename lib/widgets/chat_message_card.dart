@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/chat_message.dart';
 
 class ChatMessageCard extends StatelessWidget {
-  final ChatMessage message;
+  final LocalChatMessage message;
   final bool isAuthor; // 是否为楼主
   final bool isSelf; // 是否为自己
 
