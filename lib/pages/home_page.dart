@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'message_square_page.dart';
 import 'joined_groups_page.dart';
 import 'settings_page.dart';
+import 'friend_list_page.dart';
 import '../services/message_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,24 +24,30 @@ class _HomePageState extends State<HomePage> {
     final List<Widget> _pages = [
       MessageSquarePage(messageService: messageService),
       const JoinedGroupsPage(),
+      const FriendListPage(),
       const SettingsPage(),
     ];
 
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed, // 🔧 关键设置
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
-        showSelectedLabels: false, // ✅ 隐藏选中项文字
-        showUnselectedLabels: false, // ✅ 隐藏未选中项文字
+        // showSelectedLabels: false, // ✅ 隐藏选中项文字
+        // showUnselectedLabels: false, // ✅ 隐藏未选中项文字
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.public),
             label: '广场',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.group),
-            label: '群组',
+            icon: Icon(Icons.forum_rounded),
+            label: '频道',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people_alt_outlined), // 好友列表图标
+            label: '好友',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),

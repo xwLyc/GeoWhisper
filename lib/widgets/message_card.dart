@@ -35,8 +35,8 @@ class MessageCard extends StatelessWidget {
                         onPressed: () {}),
                     Text('${message.replies}'),
                     Spacer(),
-                    Icon(Icons.person_outline, size: 16), // ✅ 在线人数图标
-                    Text('${message.onlineCount}人在线'), // ✅ 显示在线人数
+                    Icon(Icons.person_outline, size: 16), // ✅ 成员人数图标
+                    Text('${message.members}人'), // ✅ 显示成员人数
                   ],
                 ),
               ],

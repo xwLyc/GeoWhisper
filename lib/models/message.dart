@@ -12,7 +12,7 @@ class Message {
   final int replies;
   final String channelId;
   final DateTime timestamp;
-  final int onlineCount;
+  final int members;
   final String authorId;
 
   Message({
@@ -23,7 +23,7 @@ class Message {
     required this.channelId,
     required this.timestamp,
     required this.authorId,
-    this.onlineCount = 0,
+    this.members = 0,
   });
 
   // ✅ 使用生成的 _$MessageFromJson

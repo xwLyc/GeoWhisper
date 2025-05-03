@@ -42,7 +42,7 @@ class MessageListView extends StatelessWidget {
         final channel = Channel(
           id: msg.channelId,
           name: msg.content, // 或根据需求自定义名称
-          onlineCount: msg.onlineCount ?? 0,
+          members: msg.members ?? 0,
           currentUserId: '112', // 从全局状态或 AuthService 获取
           authorId: msg.authorId,
         );

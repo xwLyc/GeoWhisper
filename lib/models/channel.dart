@@ -4,25 +4,46 @@ import 'dart:convert';
 class Channel {
   final String id;
   final String name; // 聊天室名称
-  final int onlineCount;
+  final int members;
   final String currentUserId; // 当前登录用户 ID（用于判断自己）
   final String authorId; // 楼主 ID（用于判断是否为楼主）
+  bool isJoined; // ✅ 改为可变字段
 
   Channel({
     required this.id,
     required this.name,
     required this.authorId,
     required this.currentUserId, // ✅ 必须初始化
-    this.onlineCount = 0,
+    this.members = 0,
+    this.isJoined = false,
   });
 
   factory Channel.fromJson(Map<String, dynamic> json, String currentUserId) {
     return Channel(
       id: json['id'],
       name: json['name'],
-      onlineCount: json['onlineCount'] ?? 0,
+      members: json['members'] ?? 0,
       currentUserId: currentUserId,
       authorId: json['authorId'],
+      isJoined: json['isJoined'] ?? false,
+    );
+  }
+
+  Channel copyWith({
+    String? id,
+    String? name,
+    int? members,
+    String? currentUserId,
+    String? authorId,
+    bool? isJoined,
+  }) {
+    return Channel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      members: members ?? this.members,
+      currentUserId: currentUserId ?? this.currentUserId,
+      authorId: authorId ?? this.authorId,
+      isJoined: isJoined ?? this.isJoined,
     );
   }
 }

@@ -14,7 +14,7 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
       channelId: json['channelId'] as String,
       timestamp: DateTime.parse(json['timestamp'] as String),
       authorId: json['authorId'] as String,
-      onlineCount: (json['onlineCount'] as num?)?.toInt() ?? 0,
+      members: (json['members'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -24,6 +24,6 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'replies': instance.replies,
       'channelId': instance.channelId,
       'timestamp': instance.timestamp.toIso8601String(),
-      'onlineCount': instance.onlineCount,
+      'members': instance.members,
       'authorId': instance.authorId,
     };
