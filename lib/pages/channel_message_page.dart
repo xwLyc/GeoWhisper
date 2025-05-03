@@ -1,4 +1,4 @@
-// lib/pages/message_list_page.dart
+// lib/pages/channel_message_page.dart
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart'; // ✅ 正确导入 geolocator
 import '../services/location_service.dart';
@@ -8,18 +8,18 @@ import '../widgets/chat_input_bar.dart';
 import '../models/channel_message.dart';
 import '../widgets/chat_input_bar_dash_style.dart'; // 替换旧的 chat_input_bar
 
-class MessageSquarePage extends StatefulWidget {
+class ChaneelMessage extends StatefulWidget {
   final MessageService messageService; // ✅ 注入依赖
-  const MessageSquarePage({
+  const ChaneelMessage({
     Key? key,
     required this.messageService, // 可注入 MockMessageService 或 ApiMessageService
   }) : super(key: key);
 
   @override
-  State<MessageSquarePage> createState() => _MessageSquarePageState();
+  State<ChaneelMessage> createState() => _MessageSquarePageState();
 }
 
-class _MessageSquarePageState extends State<MessageSquarePage> {
+class _MessageSquarePageState extends State<ChaneelMessage> {
   String currentChannel = '定位中...';
   late Future<void> _initFuture;
   final LocationService _locationService = LocationService();
@@ -103,6 +103,11 @@ class _MessageSquarePageState extends State<MessageSquarePage> {
     if (newChannel != null && newChannel is String) {
       setState(() {
         currentChannel = newChannel;
+      });
+
+      final data = await widget.messageService.getMessagesByChannel(newChannel);
+      setState(() {
+        channelMessages = data;
       });
     }
   }

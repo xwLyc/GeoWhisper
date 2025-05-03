@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
-      MessageSquarePage(messageService: messageService),
+      ChaneelMessage(messageService: messageService),
       const JoinedGroupsPage(),
       const FriendListPage(),
       const SettingsPage(),

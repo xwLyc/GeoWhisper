@@ -74,7 +74,7 @@ class _MessageChatPageState extends State<MessageChatPage> {
     });
   }
 
-  void _joinChannel() {
+  void _joinChat() {
     setState(() {
       widget.messageChat.isJoined = true;
     });
@@ -127,8 +127,8 @@ class _MessageChatPageState extends State<MessageChatPage> {
                 // padding: const EdgeInsets.all(20),
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.group_add),
-                  label: const Text("加入频道"),
-                  onPressed: _joinChannel,
+                  label: const Text("加入对话"),
+                  onPressed: _joinChat,
                 ),
               ),
             )
