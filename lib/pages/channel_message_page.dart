@@ -1,114 +1,92 @@
-// lib/pages/channel_message_page.dart
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart'; // ✅ 正确导入 geolocator
-import '../services/location_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/message_service.dart';
-import '../widgets/message_list_view.dart';
-import '../widgets/chat_input_bar.dart';
 import '../models/channel_message.dart';
-import '../widgets/chat_input_bar_dash_style.dart'; // 替换旧的 chat_input_bar
+import '../widgets/message_list_view.dart';
+import '../widgets/chat_input_bar_dash_style.dart';
 
-class ChaneelMessage extends StatefulWidget {
-  final MessageService messageService; // ✅ 注入依赖
-  const ChaneelMessage({
-    Key? key,
-    required this.messageService, // 可注入 MockMessageService 或 ApiMessageService
-  }) : super(key: key);
+class ChannelMessagePage extends StatefulWidget {
+  final MessageService messageService;
+  const ChannelMessagePage({Key? key, required this.messageService})
+      : super(key: key);
 
   @override
-  State<ChaneelMessage> createState() => _MessageSquarePageState();
+  State<ChannelMessagePage> createState() => _ChannelMessagePageState();
 }
 
-class _MessageSquarePageState extends State<ChaneelMessage> {
-  String currentChannel = '定位中...';
-  late Future<void> _initFuture;
-  final LocationService _locationService = LocationService();
+class _ChannelMessagePageState extends State<ChannelMessagePage> {
+  String currentChannelId = '';
+  String currentChannelName = '';
   List<ChannelMessage> channelMessages = [];
+  late Future<void> _initFuture;
 
   @override
   void initState() {
     super.initState();
-    _initFuture = _loadInitialData();
-    channelMessages = []; // ✅ 初始化为空列表
+    _initFuture = _initialize();
   }
 
-  // 新增方法：添加新消息
-  void _addMessage(String content) async {
-    final newMessage = ChannelMessage(
-      id: DateTime.now().millisecondsSinceEpoch.toString(), // ✅ 确保唯一 ID
-      authorId: 'xxx',
-      content: content,
-      likes: 0,
-      replies: 0,
-      channelId: currentChannel,
-      timestamp: DateTime.now(),
-    );
-    await widget.messageService.sendMessage(newMessage); // ✅ 提交到服务层
-    setState(() {
-      channelMessages.insert(0, newMessage); // ✅ 将新消息插入到列表顶部
-    });
-    // 自动滚动到顶部
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // 假设你有一个 ScrollController 控制 MessageListView
-      // 示例：scrollController.animateTo(0, ...);
-    });
-  }
+  Future<void> _initialize() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? storedId = prefs.getString('selected_channel_id');
+    String? storedName = prefs.getString('selected_channel_name');
 
-  Future<void> _loadInitialData() async {
-    try {
-      final position = await _locationService.getCurrentPosition();
-
-      if (position != null) {
-        final channels = _locationService.getNearbyChannels(position);
-        final selectedChannel = channels.isNotEmpty ? channels.first : '暂无附近频道';
-        final data =
-            await widget.messageService.getMessagesByChannel(selectedChannel);
-
-        setState(() {
-          currentChannel = selectedChannel;
-          channelMessages = data;
-        });
-      } else {
-        // ✅ 如果定位失败，使用默认位置（北京王府井）
-        final defaultPosition = Position(
-          latitude: 39.906712,
-          longitude: 116.397481,
-          timestamp: DateTime.now(),
-          accuracy: 1.0,
-          altitude: 0.0,
-          heading: 0.0,
-          speed: 0.0,
-          speedAccuracy: 0.0,
-          altitudeAccuracy: 0.0, // ✅ 新增参数
-          headingAccuracy: 0.0, // ✅ 新增参数
-        );
-        final channels = _locationService.getNearbyChannels(defaultPosition);
-        setState(() {
-          currentChannel = channels.isNotEmpty ? channels.first : '定位失败';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        currentChannel = '定位失败，请手动开启权限';
-      });
+    // 如果未设置频道，默认使用“默认频道”
+    if (storedId == null ||
+        storedId.isEmpty ||
+        storedName == null ||
+        storedName.isEmpty) {
+      storedId = 'default';
+      storedName = '默认频道';
+      await prefs.setString('selected_channel_id', storedId);
+      await prefs.setString('selected_channel_name', storedName);
     }
+
+    currentChannelId = storedId;
+    currentChannelName = storedName;
+    await _loadMessages(currentChannelId);
   }
 
-  void _navigateToChannelSelection(BuildContext context) async {
-    final newChannel = await Navigator.pushNamed(
-      context,
-      '/channel_selection',
-    );
-
-    if (newChannel != null && newChannel is String) {
-      setState(() {
-        currentChannel = newChannel;
-      });
-
-      final data = await widget.messageService.getMessagesByChannel(newChannel);
+  Future<void> _loadMessages(String channelId) async {
+    try {
+      final data = await widget.messageService.getMessagesByChannel(channelId);
       setState(() {
         channelMessages = data;
       });
+    } catch (e) {
+      debugPrint('加载频道消息失败：$e');
+    }
+  }
+
+  void _addMessage(String content) async {
+    final newMessage = ChannelMessage(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      authorId: 'anonymous',
+      content: content,
+      likes: 0,
+      replies: 0,
+      channelId: currentChannelId,
+      timestamp: DateTime.now(),
+    );
+    await widget.messageService.sendMessage(newMessage);
+    setState(() {
+      channelMessages.insert(0, newMessage);
+    });
+  }
+
+  void _changeChannel() async {
+    final result = await Navigator.pushNamed(context, '/channel_selection');
+    if (result != null && result is Map<String, String>) {
+      final newId = result['channelId']!;
+      final newName = result['channelName']!;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('selected_channel_id', newId);
+      await prefs.setString('selected_channel_name', newName);
+      setState(() {
+        currentChannelId = newId;
+        currentChannelName = newName;
+      });
+      await _loadMessages(newId);
     }
   }
 
@@ -116,42 +94,34 @@ class _MessageSquarePageState extends State<ChaneelMessage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: FutureBuilder(
-          future: _initFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return Text(currentChannel);
-            }
-            return const Text('定位中...');
-          },
-        ),
+        title:
+            Text(currentChannelName.isNotEmpty ? currentChannelName : '加载中...'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.my_location),
-            onPressed: () => _navigateToChannelSelection(context),
+            icon: const Icon(Icons.swap_horiz),
+            onPressed: _changeChannel,
           ),
         ],
       ),
       body: FutureBuilder(
         future: _initFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Column(
-              children: [
-                Expanded(
-                  child: MessageListView(
-                      channel: currentChannel,
-                      messages: channelMessages), // ✅ 传递 message
-                ),
-                SafeArea(
-                  top: false, // 只处理底部
-                  bottom: true,
-                  child: DashStyleInputBar(onSend: _addMessage),
-                ),
-              ],
-            );
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
           }
-          return const Center(child: CircularProgressIndicator());
+          return Column(
+            children: [
+              Expanded(
+                child: MessageListView(
+                  channel: currentChannelId,
+                  messages: channelMessages,
+                ),
+              ),
+              SafeArea(
+                child: DashStyleInputBar(onSend: _addMessage),
+              ),
+            ],
+          );
         },
       ),
     );

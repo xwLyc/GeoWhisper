@@ -14,10 +14,10 @@ class JoinedGroupsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('多人聊天'),
+        title: const Text('消息'),
       ),
       body: joinedChats.isEmpty
-          ? const Center(child: Text('你还没有加入任何频道'))
+          ? const Center(child: Text('你还没有任何消息'))
           : ListView.builder(
               itemCount: joinedChats.length,
               itemBuilder: (context, index) {

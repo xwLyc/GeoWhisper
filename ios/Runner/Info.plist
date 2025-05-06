@@ -3,10 +3,10 @@
 <plist version="1.0">
 <dict>
 	<!-- ✅ 添加定位权限描述 -->
-	<key>NSLocationWhenInUseUsageDescription</key>
+	<!-- <key>NSLocationWhenInUseUsageDescription</key>
 	<string>需要获取您的位置以推荐附近频道</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>需要获取您的位置以推荐附近频道</string>
+	<string>需要获取您的位置以推荐附近频道</string> -->
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

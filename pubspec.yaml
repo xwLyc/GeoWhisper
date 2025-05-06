@@ -15,7 +15,14 @@ dependencies:
   json_annotation: ^4.8.0 # ✅ 运行时依赖
   web_socket_channel: ^2.4.0
   dash_chat_2: ^0.0.20 
+  shared_preferences: ^2.5.3
+
   
+  # flutter_baidu_mapapi_map: ^3.5.0
+  # flutter_bmflocation: ^3.6.1
+  # geocoding: ^2.1.0 #逆地理编码
+  # flutter_baidu_yingyan_trace: ^2.2.0 # 百度逆地理编码
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

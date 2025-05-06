@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
-      ChaneelMessage(messageService: messageService),
+      ChannelMessagePage(messageService: messageService),
       const JoinedGroupsPage(),
       const FriendListPage(),
       const SettingsPage(),
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.forum_rounded),
-            label: '频道',
+            label: '消息',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.people_alt_outlined), // 好友列表图标
