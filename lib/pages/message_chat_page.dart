@@ -4,7 +4,7 @@ import 'package:dash_chat_2/dash_chat_2.dart';
 import '../models/message_chat.dart';
 import '../models/chat_detail.dart';
 import '../services/websocket_service.dart';
-import '../services/joined_channel_manager.dart'; // 假设你有这个类
+import '../services/joined_chats_manager.dart'; // 假设你有这个类
 
 class MessageChatPage extends StatefulWidget {
   final MessageChat messageChat;
@@ -82,7 +82,7 @@ class _MessageChatPageState extends State<MessageChatPage> {
     _initWebSocket();
 
     // 加入频道记录（假设你有这个类）
-    JoinedChannelManager().addChannel(widget.messageChat);
+    JoinedChatsManager().addChannel(widget.messageChat);
   }
 
   @override

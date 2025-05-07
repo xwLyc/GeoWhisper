@@ -1,7 +1,7 @@
-// lib/pages/joined_groups_page.dart
+// lib/pages/joined_chats_page.dart
 import 'package:flutter/material.dart';
 import '../models/message_chat.dart';
-import '../services/joined_channel_manager.dart';
+import '../services/joined_chats_manager.dart';
 import 'message_chat_page.dart';
 
 class JoinedGroupsPage extends StatelessWidget {
@@ -10,7 +10,7 @@ class JoinedGroupsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 获取已加入频道列表
-    List<MessageChat> joinedChats = JoinedChannelManager().joinedChats;
+    List<MessageChat> joinedChats = JoinedChatsManager().joinedChats;
 
     return Scaffold(
       appBar: AppBar(

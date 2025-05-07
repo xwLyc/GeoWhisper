@@ -1,7 +1,7 @@
 // lib/pages/home_page.dart
 import 'package:flutter/material.dart';
 import 'channel_message_page.dart';
-import 'joined_groups_page.dart';
+import 'joined_chats_page.dart';
 import 'settings_page.dart';
 import 'friend_list_page.dart';
 import '../services/message_service.dart';
