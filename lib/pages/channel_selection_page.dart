@@ -1,3 +1,5 @@
+// lib/pages/channel_selection_page.dart
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
 class ChannelSelectionPage extends StatefulWidget {
@@ -8,123 +10,139 @@ class ChannelSelectionPage extends StatefulWidget {
 }
 
 class _ChannelSelectionPageState extends State<ChannelSelectionPage> {
-  final List<Map<String, String>> _channelList = [
-    {'channelId': '001', 'channelName': '默认频道'},
-    {'channelId': '002', 'channelName': '地铁树洞'},
-    {'channelId': '003', 'channelName': '学校墙'},
+  final TextEditingController _searchController = TextEditingController();
+  final List<String> hotChannels = [
+    '校园树洞',
+    '地铁闲聊',
+    '早八吐槽',
+    '考研专区',
+    '恋爱互助',
+    '失恋互助会',
+    '考公冲刺',
+    '毕业季感慨'
   ];
 
-  final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _createController = TextEditingController();
-
-  List<Map<String, String>> _filteredChannels = [];
+  List<String> searchResults = [];
+  String keyword = '';
 
   @override
   void initState() {
     super.initState();
-    _filteredChannels = List.from(_channelList);
+    _searchController.addListener(_onSearchChanged);
   }
 
-  void _filterChannels(String keyword) {
+  void _onSearchChanged() {
     setState(() {
-      _filteredChannels = _channelList
-          .where((channel) => channel['channelName']!.contains(keyword.trim()))
+      keyword = _searchController.text.trim();
+      _updateSearchResults();
+    });
+  }
+
+  void _updateSearchResults() {
+    if (keyword.isEmpty) {
+      searchResults = [];
+    } else {
+      final lowerKeyword = keyword.toLowerCase();
+      searchResults = hotChannels
+          .where((c) => c.toLowerCase().contains(lowerKeyword))
           .toList();
-    });
-  }
-
-  void _createChannel(String name) {
-    if (name.trim().isEmpty || name.trim().length > 10) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('频道名不能为空，且不能超过10个字')),
-      );
-      return;
     }
-
-    // 创建一个唯一 channelId（可改为服务端生成）
-    final newChannel = {
-      'channelId': DateTime.now().millisecondsSinceEpoch.toString(),
-      'channelName': name.trim(),
-    };
-
-    setState(() {
-      _channelList.add(newChannel);
-      _filteredChannels.add(newChannel);
-    });
-
-    _createController.clear();
-
-    // 自动返回
-    Navigator.pop(context, newChannel);
   }
 
-  void _selectChannel(Map<String, String> channel) {
-    Navigator.pop(context, channel);
+  void _selectChannel(String name) {
+    final trimmedName = name.length > 10 ? name.substring(0, 10) : name;
+    final channelId = trimmedName.hashCode.toString(); // 示例 ID
+    Navigator.pop(context, {
+      'channelId': channelId,
+      'channelName': trimmedName,
+    });
+  }
+
+  Widget _buildHotChannels() {
+    return ListView.builder(
+      itemCount: hotChannels.length,
+      itemBuilder: (context, index) {
+        final channel = hotChannels[index];
+        return ListTile(
+          title: Text(channel),
+          onTap: () => _selectChannel(channel),
+        );
+      },
+    );
+  }
+
+  Widget _buildSearchResults() {
+    return Column(
+      children: [
+        Expanded(
+          child: searchResults.isNotEmpty
+              ? ListView.builder(
+                  itemCount: searchResults.length,
+                  itemBuilder: (context, index) {
+                    final channel = searchResults[index];
+                    return ListTile(
+                      title: Text(channel),
+                      onTap: () => _selectChannel(channel),
+                    );
+                  },
+                )
+              : const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Text('没有找到相关频道'),
+                ),
+        ),
+        if (searchResults.isEmpty)
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.add),
+              label: Text(
+                  '创建频道：${keyword.length > 10 ? keyword.substring(0, 10) : keyword}'),
+              onPressed: () => _selectChannel(keyword),
+            ),
+          ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final showSearchResults = keyword.isNotEmpty;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('选择频道'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // 搜索框
-            TextField(
+      appBar: AppBar(title: const Text('选择频道')),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: TextField(
               controller: _searchController,
+              maxLength: 12,
+              maxLengthEnforcement: MaxLengthEnforcement.none,
               decoration: InputDecoration(
-                hintText: '搜索频道',
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () => _filterChannels(_searchController.text),
-                ),
+                hintText: '搜索频道名称（最多12个字）',
+                prefixIcon: Icon(Icons.search),
+                suffixIcon: keyword.isNotEmpty
+                    ? IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: () => _searchController.clear(),
+                      )
+                    : null,
               ),
-              onSubmitted: _filterChannels,
             ),
-            const SizedBox(height: 16),
-
-            // 列表
-            Expanded(
-              child: _filteredChannels.isEmpty
-                  ? const Center(child: Text('暂无匹配频道'))
-                  : ListView.builder(
-                      itemCount: _filteredChannels.length,
-                      itemBuilder: (context, index) {
-                        final channel = _filteredChannels[index];
-                        return ListTile(
-                          title: Text(channel['channelName']!),
-                          onTap: () => _selectChannel(channel),
-                        );
-                      },
-                    ),
-            ),
-
-            const Divider(),
-            const SizedBox(height: 8),
-
-            // 创建频道
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _createController,
-                    decoration: const InputDecoration(
-                      hintText: '输入新频道名（≤10字）',
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () => _createChannel(_createController.text),
-                  child: const Text('创建'),
-                )
-              ],
-            )
-          ],
-        ),
+          ),
+          Expanded(
+            child:
+                showSearchResults ? _buildSearchResults() : _buildHotChannels(),
+          ),
+        ],
       ),
     );
   }
